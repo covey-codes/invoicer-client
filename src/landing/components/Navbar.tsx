@@ -1,4 +1,11 @@
-import { Menu, X, ChevronDown, FileText, Users, BarChart2 } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  FileText,
+  Users,
+  BarChart2,
+} from "lucide-react";
 import { useNavbar } from "@/landing/hooks/navhooks";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
@@ -9,7 +16,8 @@ const mockUser = {
 };
 
 const Navbar = () => {
-  const { isMenuOpen, toggleMenu, setIsMenuOpen, menuRef, iconRef } = useNavbar();
+  const { isMenuOpen, toggleMenu, setIsMenuOpen, menuRef, iconRef } =
+    useNavbar();
   const navigate = useNavigate();
 
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -41,14 +49,18 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative lg:w-[100%] mt-5 mx-4 lg:mx-20 bg-[#03192F] rounded-2xl py-4 z-50 shadow-xl">
+    <nav className="relative  mt-5 mx-4 lg:mx-20 bg-[#03192F] rounded-2xl py-4 z-50 shadow-xl">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-16 items-center">
-          <span className="text-2xl text-white font-extrabold">
+
+        {/* DESKTOP NAV */}
+        <div className="hidden md:grid grid-cols-3 items-center h-16">
+          {/* LEFT: LOGO */}
+          <span className="text-2xl text-white font-extrabold justify-self-start">
             Invoicer-Client
           </span>
 
-          <div className="hidden md:flex items-center space-x-6">
+          {/* CENTER NAV */}
+          <div className="flex items-center justify-center space-x-6">
             <Link to="/dashboard" className="text-white hover:text-indigo-400">
               Home
             </Link>
@@ -80,14 +92,71 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="md:hidden">
-            <button ref={iconRef} onClick={toggleMenu} className="text-white">
-              {isMenuOpen ? <X /> : <Menu />}
-            </button>
+          {/* RIGHT: AUTH / AVATAR */}
+          <div className="flex justify-self-end items-center gap-3 relative">
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/signin"
+                  className="text-white border border-white/30 px-4 py-2 rounded-lg hover:bg-white hover:text-[#03192F]"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600"
+                >
+                  Sign up
+                </Link>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setIsUserMenuOpen((p) => !p)}
+                  className="w-9 h-9 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold"
+                >
+                  {user.name.charAt(0)}
+                </button>
+
+                {isUserMenuOpen && (
+                  <div
+                    ref={profileMenuRef}
+                    className="absolute top-12 right-0 bg-white rounded-lg shadow-lg w-40 overflow-hidden"
+                  >
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
+        </div>
+
+        {/* MOBILE NAV */}
+        <div className="flex md:hidden items-center justify-between h-16">
+          {/* MOBILE LOGO */}
+          <span className="text-2xl text-white font-extrabold truncate">
+            Invoicer-Client
+          </span>
+
+          {/* MOBILE BURGER */}
+          <button ref={iconRef} onClick={toggleMenu} className="text-white">
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
       </div>
 
+      {/* MOBILE OVERLAY */}
       {isMenuOpen && (
         <div
           onClick={() => setIsMenuOpen(false)}
@@ -95,6 +164,7 @@ const Navbar = () => {
         />
       )}
 
+      {/* MOBILE MENU */}
       <div
         ref={menuRef}
         className={`fixed top-0 right-0 h-full w-1/2 bg-[#03192F] p-6 z-50 transition-transform duration-300 ${
@@ -102,77 +172,65 @@ const Navbar = () => {
         }`}
       >
         <div className="space-y-1 text-white">
+          <Link to="/dashboard" className="block px-4 py-3 border-y border-white/20">
+            Home
+          </Link>
 
-<Link
-  to="/dashboard"
-  className="block px-4 py-3 border-t border-b border-white/20"
-  onClick={() => setIsMenuOpen(false)}
->
-  Home
-</Link>
+          <button
+            onClick={() => setIsMobileFeaturesOpen((p) => !p)}
+            className="w-full text-left px-4 py-3 border-y border-white/20 flex items-center justify-between"
+          >
+            Features <ChevronDown size={16} />
+          </button>
 
-<button
-  onClick={() => setIsMobileFeaturesOpen((p) => !p)}
-  className="w-full text-left px-4 py-3 border-t border-b border-white/20 flex items-center justify-between"
->
-  Features <ChevronDown size={16} />
-</button>
+          {isMobileFeaturesOpen && (
+            <div className="text-sm">
+              <Link to="/invoiceForm" className="block px-6 py-3 border-b border-white/20">
+                Smart Invoicing
+              </Link>
+              <Link to="/clientManagement" className="block px-6 py-3 border-b border-white/20">
+                Client Management
+              </Link>
+              <Link to="/financialReporting" className="block px-6 py-3 border-b border-white/20">
+                Financial Reporting
+              </Link>
+            </div>
+          )}
 
-{isMobileFeaturesOpen && (
-  <div className="text-sm">
-    <Link
-      to="/invoiceForm"
-      className="block px-6 py-3 border-b border-white/20"
-    >
-      Smart Invoicing
-    </Link>
-    <Link
-      to="/clientManagement"
-      className="block px-6 py-3 border-b border-white/20"
-    >
-      Client Management
-    </Link>
-    <Link
-      to="/financialReporting"
-      className="block px-6 py-3 border-b border-white/20"
-    >
-      Financial Reporting
-    </Link>
-  </div>
-)}
+          <Link to="/pricing" className="block px-4 py-3 border-y border-white/20">
+            Pricing
+          </Link>
 
-<Link
-  to="/pricing"
-  className="block px-4 py-3 border-t border-b border-white/20"
->
-  Pricing
-</Link>
+          <Link to="/support" className="block px-4 py-3 border-y border-white/20">
+            Support
+          </Link>
 
-<Link
-  to="/support"
-  className="block px-4 py-3 border-t border-b border-white/20"
->
-  Support
-</Link>
-
-<Link
-  to="/profile"
-  className="block px-4 py-3 border-t border-b border-white/20"
->
-  Profile
-</Link>
-
-{/* LOGOUT */}
-{isAuthenticated && (
-  <button
-    onClick={handleLogout}
-    className="w-full mt-6 px-4 py-3 text-red-400 border-t border-red-500"
-  >
-    Logout
-  </button>
-)}
-</div>
-
+          {!isAuthenticated ? (
+            <>
+              <Link to="/signin" className="block px-4 py-3 border-y border-white/20">
+                Sign in
+              </Link>
+              <Link
+                to="/signup"
+                className="block px-4 py-3 text-center bg-indigo-500 rounded-lg mt-4"
+              >
+                Sign up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/profile" className="block px-4 py-3 border-y border-white/20">
+                Profile
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full mt-6 px-4 py-3 text-red-400 border-t border-red-500"
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
